@@ -12,32 +12,27 @@ class Template(object):
         super(Template, self).__init__()
         self.args = args
         #sucribir a joy 
-        self.sub = rospy.Subscriber("topic" , Joy, self.callback)
+        self.sub = rospy.Subscriber("/duckiebot/joy", Joy, self.callback)
         #publicar la intrucciones del control en possible_cmd
-        self.publi = rospy.Publisher("topic", Twist2DStamped, queue_size = "x")
+        self.publi = rospy.Publisher("/duckiebot/wheels_driver_node/car_cmd", Twist2DStamped, queue_size = 10)
         self.twist = Twist2DStamped()
 
-
-    #def publicar(self, msg):
-        #self.publi.publish(msg)
-
     def callback(self,msg):
-        a = msg.buttons[]
-        y = msg.axes[]
-        x = msg.axes[]
-        z = msg.axes[]
+        a = msg.buttons[0]
+        y = msg.axes[5]
+        x = msg.axes[2]
+        z = msg.axes[0]
 
         print(y, x, z)
-        self.twist.omega = 
-        self.twist.v = 
+        self.twist.omega = -z*15 + 0.098
+        self.twist.v = -(y-1) + (x-1)/2
 
         if a == 1:
-            self.twist.omega = 
-            self.twist.v = 
+            self.twist.omega = 0
+            self.twist.v = 0
         
         self.publi.publish(self.twist)
         
-
 
 
 
@@ -53,3 +48,4 @@ def main():
 
 if __name__ =='__main__':
     main()
+
