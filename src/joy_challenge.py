@@ -3,7 +3,7 @@
 import rospy #importar ros para python
 from std_msgs.msg import String, Int32 #importa mensajes de ROS tipo String y Int32
 from sensor_msgs.msg import Joy # impor mensaje tipo Joy
-from geometry_msgs.msg import Twist # importar mensajes de ROS tipo geometry / Twist
+from geometry_msgs.msg import Twist, Point # importar mensajes de ROS tipo geometry / Twist
 from duckietown_msgs.msg import Twist2DStamped 
 
 
@@ -18,7 +18,6 @@ class Template(object):
         self.twist = Twist2DStamped()
 
     def callback(self,msg):
-        a = msg.buttons[0]
         y = msg.axes[5]
         x = msg.axes[2]
         z = msg.axes[0]
@@ -26,10 +25,6 @@ class Template(object):
         print(y, x, z)
         self.twist.omega = -z*15 + 0.098
         self.twist.v = -(y-1) + (x-1)/2
-
-        if a == 1:
-            self.twist.omega = 0
-            self.twist.v = 0
         
         self.publi.publish(self.twist)
         

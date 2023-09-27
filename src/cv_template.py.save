@@ -17,10 +17,10 @@ class Template(object):
 		#Suscribrirse a la camara
 		self.Sub_Cam = rospy.Subscriber("/duckiebot/camera_node/image/raw", Image, self.procesar_img)
         #Publicar imagen(es)
+
 		self.pub_img = rospy.Publisher("/duckiebot/topico_prueba", Image, queue_size = 1)
 		#self.pub_img = rospy.Publisher("mas", Image, queue_size = 1)
-		self.pub_pos = rospy.Publisher("/duckiebot/posicionPato", Point , queue_size=1 )
-		self.punto = Point()
+
 
 	def procesar_img(self, msg):
 		#Transformar Mensaje a Imagen
@@ -36,37 +36,29 @@ class Template(object):
 			#cv2.COLOR_BGR2GRAY
 			#cv2.COLOR_BGR2RGB
 
-		image_out = cv2.cvtColor(image,cv2.COLOR_BGR2HSV)
+		image_out = cv2.cvtColor(image, "Espacio de color") 
 
 		#Definir rangos para la mascara
 
-		lower_limit = np.array([20,90, 110 ])
-		upper_limit =np.array([70 ,255 ,255 ])
+		lower_limit = np.array([ , , ])
+		upper_limit =np.array([ , , ])
 
 		#Mascara
-
-
-
-
 		mask = cv2.inRange(image_out, lower_limit, upper_limit)
 		image_out = cv2.bitwise_and(image, image, mask=mask)
 
 		# Operaciones morfologicas, normalmente se utiliza para "limpiar" la mascara
-		kernel = np.ones((5,5), np.uint8)
-		img_erode = cv2.erode(mask, kernel, iterations = 1) #Erosion
-		img_dilate = cv2.dilate(img_erode, kernel, iterations = 1) #Dilatar
+		kernel = np.ones(('ancho' , 'largo'), np.uint8)
+		img_erode = cv2.erode(mask, kernel, iterations="numero de iteraciones") #Erosion
+		img_dilate = cv2.dilate(img_erode, kernel, iterations="numero de iteraciones") #Dilatar 
 
 		# Definir blobs
 		_,contours, hierarchy = cv2.findContours(img_dilate,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
 		for cnt in contours:
 			AREA = cv2.contourArea(cnt)
-			if AREA>100 : #Filtrar por tamao de blobs
+			if AREA>"Tamano area en pixeles": #Filtrar por tamano de blobs
 				x,y,w,h = cv2.boundingRect(cnt)
-				cv2.rectangle(image, (x,y), (w+x,h+y), (0,0,0), 2)
-				h = 3.8*163.98/w
-				print(h)
-				self.punto.z=h
-				self.pub_pos.publish(self.punto)
+				cv2.rectangle(image, ("coordenada","coordenada"), ("coordenada","coordenada"), ("rojo","azul","verde"), "tamaño del rectangulo en pixeles")
 			else:
 				None
 
